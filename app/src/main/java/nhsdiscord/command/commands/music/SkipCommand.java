@@ -41,7 +41,7 @@ public class SkipCommand implements ICommand {
             return;
         }
 
-        musicManager.scheduler.nextTrack();
+        musicManager.scheduler.skipTrack();
         channel.sendMessage("Skipped the current track").queue();
     }
 

@@ -1,6 +1,7 @@
 package nhsdiscord.command.commands.music;
 
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
+import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import net.dv8tion.jda.api.entities.GuildVoiceState;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.TextChannel;
@@ -9,7 +10,7 @@ import nhsdiscord.command.ICommand;
 import nhsdiscord.lavaplayer.GuildMusicManager;
 import nhsdiscord.lavaplayer.PlayerManager;
 
-public class RepeatCommand implements ICommand {
+public class NextCommand implements ICommand {
     @Override
     public void handle(CommandContext ctx) {
         final TextChannel channel = ctx.getChannel();
@@ -34,21 +35,24 @@ public class RepeatCommand implements ICommand {
         }
 
         final GuildMusicManager musicManager = PlayerManager.getInstance().getMusicManager(ctx.getGuild());
+        final AudioPlayer audioPlayer = musicManager.audioPlayer;
+        final AudioTrack track = audioPlayer.getPlayingTrack();
+        if (track == null) {
+            channel.sendMessage("There is no track playing currently").queue();
+            return;
+        }
 
-        final boolean newRepeating = !musicManager.scheduler.repeatAll;
-
-        musicManager.scheduler.repeatAll = newRepeating;
-
-        channel.sendMessageFormat("The Player has been set to **%s**", newRepeating ? "repeating" : "not repeating").queue();
+        musicManager.scheduler.nextTrack(track);
+        channel.sendMessage("Go to the next track").queue();
     }
 
     @Override
     public String getName() {
-        return "repeat";
+        return "next";
     }
 
     @Override
     public String getHelp() {
-        return "Loops the current song";
+        return "다음 곡 실행 (반복모드일 경우 이 곡이 지워지지 않음)";
     }
 }
