@@ -29,6 +29,7 @@ public class CommandManager {
         addCommand(new RepeatCommand());
         addCommand(new LeaveCommand());
         addCommand(new NowPlayingCommand());
+        addCommand(new PauseCommand());
 //        addCommand(new EventWaiterCommand(waiter));
     }
 
