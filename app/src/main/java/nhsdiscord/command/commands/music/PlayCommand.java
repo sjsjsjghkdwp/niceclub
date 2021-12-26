@@ -3,6 +3,8 @@ package nhsdiscord.command.commands.music;
 import net.dv8tion.jda.api.entities.GuildVoiceState;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.entities.VoiceChannel;
+import net.dv8tion.jda.api.managers.AudioManager;
 import nhsdiscord.Config;
 import nhsdiscord.command.CommandContext;
 import nhsdiscord.command.ICommand;
@@ -25,11 +27,6 @@ public class PlayCommand implements ICommand {
         final Member self = ctx.getSelfMember();
         final GuildVoiceState selfVoiceState = self.getVoiceState();
 
-        if (!selfVoiceState.inVoiceChannel()) {
-            channel.sendMessage("I need to be in a voice channel for this to work").queue();
-            return;
-        }
-
         final Member member = ctx.getMember();
         final GuildVoiceState memberVoiceState = member.getVoiceState();
 
@@ -37,7 +34,14 @@ public class PlayCommand implements ICommand {
             channel.sendMessage("You need to be in a voice channel for this command to work").queue();
             return;
         }
-        if(!memberVoiceState.getChannel().equals(selfVoiceState.getChannel())) {
+
+        if (!selfVoiceState.inVoiceChannel()) {
+            final AudioManager audioManager = ctx.getGuild().getAudioManager();
+            final VoiceChannel memberChannel = memberVoiceState.getChannel();
+            audioManager.openAudioConnection(memberChannel);
+//            channel.sendMessage("I need to be in a voice channel for this to work").queue();
+//            return;
+        } else if(!memberVoiceState.getChannel().equals(selfVoiceState.getChannel())) {
             channel.sendMessage("You need to be in the same voice channel as me for this to work").queue();
             return;
         }
