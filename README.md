@@ -6,7 +6,7 @@
 
 ## Version
 
-* ver 0.0.0
+* [ver 0.0.0](./docs/version/ver.0.0.0.md)
   * 유투브 영상을 참고해 제작한 discord 봇의 기본적인 구조
   * https://www.youtube.com/watch?v=dOmyJhB_feM&list=PLWnw41ah3I4YxBetY8iCa-b9t1JwV2jsW
 
