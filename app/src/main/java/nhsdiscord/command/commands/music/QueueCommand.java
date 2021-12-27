@@ -1,5 +1,6 @@
 package nhsdiscord.command.commands.music;
 
+import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
 import net.dv8tion.jda.api.entities.TextChannel;
@@ -26,10 +27,17 @@ public class QueueCommand implements ICommand {
             return;
         }
 
-        final int trackCount = Math.min(queue.size(), 20);
+        final int trackCount = Math.min(queue.size(), 30);
         final List<AudioTrack> trackList = new ArrayList<>(queue);
         final MessageAction messageAction = channel.sendMessage("**Current Queue**\n");
-        for (int i=0; i<trackCount; i++) {
+
+        if (trackList.size() > trackCount) {
+            messageAction.append("And `")
+                    .append(String.valueOf(trackList.size() - trackCount))
+                    .append("` more...\n");
+        }
+
+        for (int i=trackCount-1; i>=0; i--) {
             final AudioTrack track = trackList.get(i);
             final AudioTrackInfo info = track.getInfo();
 
@@ -44,11 +52,10 @@ public class QueueCommand implements ICommand {
                     .append("`]\n");
         }
 
-        if (trackList.size() > trackCount) {
-            messageAction.append("And `")
-                    .append(String.valueOf(trackList.size() - trackCount))
-                    .append("` more...");
-        }
+        final AudioPlayer audioPlayer = musicManager.audioPlayer;
+        AudioTrack track = audioPlayer.getPlayingTrack();
+        final AudioTrackInfo info = track.getInfo();
+        messageAction.appendFormat("nowplaying `%s` by `%s` (Link: <%s>)", info.title, info.author, info.uri);
 
         messageAction.queue();
     }
@@ -69,5 +76,10 @@ public class QueueCommand implements ICommand {
     @Override
     public String getHelp() {
         return "show the queued up songs";
+    }
+
+    @Override
+    public List<String> getAliasese() {
+        return List.of("q");
     }
 }
